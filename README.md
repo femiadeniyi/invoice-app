@@ -1,16 +1,21 @@
 # invoice_app
 
-A new Flutter project.
+Create invoices and download them
 
-## Getting Started
+## What this app does
 
-This project is a starting point for a Flutter application.
+- Takes your invoice details, stores them locally. 
+- Sends details to cloud to generate PDF. 
+- Creates temporary link to PDF
+- Copy link to clipboard
+- Paste link in browser to view invoice
 
-A few resources to get you started if this is your first Flutter project:
+## Learnings
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Even though I like Google Cloud, this project showed me not to trust them. I spent 9 hours fixing cloud deployment/permission issues. 
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Backend is usually simple but because I had to do backend the Google way, it increased time - especially creating temporary links. That will take minimum 30 minutes to deploy without bugs.
+
+
+
+
