@@ -16,6 +16,4 @@ Even though I like Google Cloud, this project showed me not to trust them. I spe
 
 Backend is usually simple but because I had to do backend the Google way, it increased time - especially creating temporary links. That will take minimum 30 minutes to deploy without bugs.
 
-
-
-
+![Firebase](https://firebase.google.com/downloads/brand-guidelines/PNG/logo-standard.png)
