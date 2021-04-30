@@ -137,13 +137,13 @@ class InvoiceState extends State<Invoice> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FloatingActionButton.extended(
-            onPressed: (){_downloadInvoices();},
-            label: Text("Download"),
-            icon: Icon(Icons.download_outlined),
-            backgroundColor: Colors.pink,
-          ),
-          SizedBox(height: 8.0),
+          // FloatingActionButton.extended(
+          //   onPressed: (){_downloadInvoices();},
+          //   label: Text("Download"),
+          //   icon: Icon(Icons.download_outlined),
+          //   backgroundColor: Colors.pink,
+          // ),
+          // SizedBox(height: 8.0),
           FloatingActionButton.extended(
             onPressed: (){_openFormDialog();},
             label: Text("Add Invoice"),

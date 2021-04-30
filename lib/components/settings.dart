@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
-  String invoiceFor;
-  String invoiceFrom;
+  late String invoiceFor;
+  late String invoiceFrom;
 
   _saveSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -24,24 +24,24 @@ class Settings extends StatelessWidget {
               children: [
                 TextFormField(
                     onSaved: (value) {
-                      invoiceFor = value;
+                      invoiceFor = value!;
                     },
                     decoration: const InputDecoration(
                         labelText: "Who is the invoice for?"),
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Please complete';
                       }
                       return null;
                     }),
                 TextFormField(
                     onSaved: (value) {
-                      invoiceFrom = value;
+                      invoiceFrom = value!;
                     },
                     decoration: const InputDecoration(
                         labelText: "Who is the invoice from?"),
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Please complete';
                       }
                       return null;
@@ -50,8 +50,8 @@ class Settings extends StatelessWidget {
                   padding: EdgeInsets.all(16),
                   child: ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
                           _saveSettings();
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Settings save")));
