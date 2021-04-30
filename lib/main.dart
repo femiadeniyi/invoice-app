@@ -78,11 +78,11 @@ class _MyHomePageState extends State<MyHomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Invoices',
+            label: 'Timesheets',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.support_agent),
+            label: 'Support',
           ),
         ],
         currentIndex: _selectedIndex,

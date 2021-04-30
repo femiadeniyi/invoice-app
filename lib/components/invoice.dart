@@ -146,7 +146,7 @@ class InvoiceState extends State<Invoice> {
           // SizedBox(height: 8.0),
           FloatingActionButton.extended(
             onPressed: (){_openFormDialog();},
-            label: Text("Add Invoice"),
+            label: Text("Add to timesheet"),
             icon: Icon(Icons.add),
             backgroundColor: Colors.pink,
           ),
