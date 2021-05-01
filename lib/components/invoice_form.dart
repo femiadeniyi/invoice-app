@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_app/model/invoice_item.dart';
 import 'package:invoice_app/structs/Shift.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:week_of_year/week_of_year.dart';
+
 
 class InvoiceForm extends StatefulWidget {
   @override
@@ -14,57 +17,14 @@ class _InvoiceFormState extends State<InvoiceForm> {
 
   TextEditingController _textEditingController = TextEditingController();
 
-  late String shift;
-  String units = "1";
-  late String description;
-  late double rate;
-
-
-  List<String> units_selection = [];
-  var shift_values = Shift.defaultValues().map((e) => e.name).toList();
-
+  List<Shift> shifts = Shift.defaultValues();
+  Shift shift = Shift.defaultValues().first;
 
   setUnitsSelection(){
-    switch (name) {
-      case "Domil 60":
-      case "Domil 45":
-      case "Domil 30": {
-        setState(() {
-          units = "1";
-          units_selection = ["1","2","3","4","5","6"];
-        });
-        break;
-      }
-      case "Long Shift": {
-         setState(() {
-           units = "1 - 12 Hours";
-           units_selection = ["1 - 12 Hours"];
-         });
-        break;
-      }
-      case "Waking Night": {
-        setState(() {
-          units = "1";
-          units_selection = ["1","2","3","4","5","6","7","8","9","10","11","12"];
-        });
-        break;
-      }
-      case "Live in Weekly": {
-        setState(() {
-          units = "1 day";
-          units_selection = ["1 day","2 days","3 days","4 days","5 days","6 days","7 - 1 Week"];
-        });
-        break;
-      }
-      case "Live in Daily": {
-        print("hey");
-        setState(() {
-          units = "1";
-          units_selection = ["1"];
-        });
-        break;
-      }
-    }
+    setState(() {
+      shift = shifts.where((element) => element.name == shift.name).single;
+    });
+
   }
 
   _selectDate(context) async {
@@ -75,14 +35,15 @@ class _InvoiceFormState extends State<InvoiceForm> {
         lastDate: DateTime(2022));
     if (selectedDate != null) {
       var dateStr = DateFormat("dd/M/yy").format(selectedDate);
+      print("data $dateStr");
       _textEditingController..text = dateStr;
     }
   }
 
-  String name = Shift.defaultValues().first.name;
-
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Invoice Form"),
@@ -96,7 +57,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
               children: [
                 TextFormField(
                     onSaved: (value) {
-                      shift = value!;
+                      shift.date = value!;
                     },
                     decoration: const InputDecoration(labelText: "Date"),
                     controller: _textEditingController,
@@ -111,18 +72,17 @@ class _InvoiceFormState extends State<InvoiceForm> {
                     }),
                 DropdownButtonFormField<String>(
                   onSaved: (value){
-                    name = value!;
+                    shift.name = value!;
                   },
                   isExpanded: true,
-                  value: name,
+                  value: shift.name,
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
                   style: const TextStyle(color: Colors.deepPurple),
                   onChanged: (String? newValue) {
-                    print("you");
                     setState(() {
-                      name = newValue!;
+                      shift.name = newValue!;
                     });
                     setUnitsSelection();
                   },
@@ -136,18 +96,21 @@ class _InvoiceFormState extends State<InvoiceForm> {
                 ),
                 DropdownButtonFormField<String>(
                   onSaved: (value){
-                    units = value!;
+                    setState(() {
+                      shift.value = value!;
+                    });
                   },
                   isExpanded: true,
-                  value: units,
+                  value: shift.value,
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
                   style: const TextStyle(color: Colors.deepPurple),
                   onChanged: (String? newValue) {
-                    print("you");
+                    print("you11");
+                    // shift.value = newValue!;
                   },
-                  items: units_selection
+                  items: shift.options
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -160,13 +123,57 @@ class _InvoiceFormState extends State<InvoiceForm> {
                   padding: EdgeInsets.all(16),
                   child: ElevatedButton(
                       onPressed: () {
-                        // if (_formKey.currentState!.validate()) {
-                        //   _formKey.currentState!.save();
-                        //   var invoiceItem =
-                        //       new InvoiceItem(description, shift, units, rate);
-                        //   // If the form is valid, display a Snackbar.
-                        //   Navigator.of(context).pop(invoiceItem);
-                        // }
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          showDialog<bool>(
+                              context: context,
+                              builder: (builder){
+                                return AlertDialog(
+                                  title: Text('Tax Confirmation Statement'),
+                                  content: SingleChildScrollView(
+                                    child: ListBody(
+                                      children: <Widget>[
+                                        Text('I confirm I am responsible for paying my NI and Tax'),
+                                        Text('Please confirm'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('Approve'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              }
+                          ).then((value){
+                            if( value! == true ){
+                              shift.created_at = DateTime.now().toUtc().toString();
+                              DateTime now = DateTime.now();
+                              now.add(Duration(days: 1));
+                              shift.group = "${now.year}${now.weekOfYear}";
+                              shift.addShift(FirebaseAuth.instance.currentUser!.uid)
+                                  .then((value){
+                                Navigator.of(context).pop();
+                              })
+                                  .catchError((onError){
+                                final snackBar = SnackBar(content: Text('Error contact support'));
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              });
+                            }
+                          })
+                          .onError((error, stackTrace){
+                            print("error $error");
+                          });
+                        }
                       },
                       child: Text("Submit")),
                 )

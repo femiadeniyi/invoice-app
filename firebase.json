@@ -3,7 +3,7 @@
     "predeploy": "npm --prefix \"$RESOURCE_DIR\" run build"
   },
   "hosting": {
-    "target": "invoice",
+    "target": "invoice2",
     "public": "build/web",
     "ignore": [
       "firebase.json",

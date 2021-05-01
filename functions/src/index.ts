@@ -24,6 +24,9 @@ interface Invoice {
     items:InvoiceItem[]
 }
 
+export const uploadTimesheet = functions.https.onCall(async (data:string,context)) => {
+
+}
 
 export const helloWorld = functions.https.onCall(async (data:string,context) => {
     const filename = v4()+".pdf";

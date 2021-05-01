@@ -1,12 +1,14 @@
 
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:invoice_app/components/invoice_form.dart';
 import 'package:invoice_app/model/invoice_item.dart';
+import 'package:invoice_app/structs/timesheet_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Invoice extends StatefulWidget {
 
@@ -119,20 +121,7 @@ class InvoiceState extends State<Invoice> {
     return Scaffold(
 
       body: Container(
-        child: _invoiceItems.length > 0 ? ListView.separated(
-            itemBuilder: (context,index){
-              return Card(
-                child: ListTile(
-                  title: Text(_invoiceItems[index].shift),
-                  subtitle: Text(_invoiceItems[index].description),
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => const Divider(),
-            itemCount: _invoiceItems.length
-        ) : Center(
-          child: Text("No invoices yet. Click to add"),
-        ),
+        child: TimesheetList(),
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
