@@ -20,9 +20,10 @@ class _InvoiceFormState extends State<InvoiceForm> {
   List<Shift> shifts = Shift.defaultValues();
   Shift shift = Shift.defaultValues().first;
 
-  setUnitsSelection(){
+  setUnitsSelection(String? newValue){
+    var newShift = shifts.where((element) => element.name == newValue!).first;
     setState(() {
-      shift = shifts.where((element) => element.name == shift.name).single;
+      shift = newShift;
     });
 
   }
@@ -72,7 +73,9 @@ class _InvoiceFormState extends State<InvoiceForm> {
                     }),
                 DropdownButtonFormField<String>(
                   onSaved: (value){
-                    shift.name = value!;
+                    setState(() {
+                      shift.name = value!;
+                    });
                   },
                   isExpanded: true,
                   value: shift.name,
@@ -82,9 +85,8 @@ class _InvoiceFormState extends State<InvoiceForm> {
                   style: const TextStyle(color: Colors.deepPurple),
                   onChanged: (String? newValue) {
                     setState(() {
-                      shift.name = newValue!;
+                      setUnitsSelection(newValue);
                     });
-                    setUnitsSelection();
                   },
                   items: Shift.defaultValues()
                       .map<DropdownMenuItem<String>>((Shift value) {
